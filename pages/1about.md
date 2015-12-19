@@ -7,35 +7,31 @@ icon: glyphicon-heart
 
 ### 关于我
 
-> 欢迎来到我的博客,此博客主要记录我个人的前行记录,既有开发技术也有日常生活记录
+> 感谢进入我的博客，我会尽我最大努力为大家提供新的知识的输出，希望我的理解和体会对大家有帮助
 
-就读于江西农业大学软件工程12级
 
-兴趣比较广泛：现在主要方向在于Java开发，对于Python也有着浓厚的兴趣(PS:正在搬砖过程中)
+特点：本人好奇心很强，当接触到新的东西时总会怀着很大的热情去学习，尤其是对数据库和Linux感兴趣，当然后面技术的不断更新，总会有好多值得我们探讨和研究的新技术。本人有着非到长城非好汉的心态，有着持之以恒的心态，不完成心目中的目标不罢休的心理。
 
-拥有一颗走遍天下的心
+主要的方向：java web方向的研发，以及对Hadoop HBase Hive关于大数据方面的技术感兴趣
 
-下一步旅行计划：进行一次西藏之旅
-
-特别喜欢起风了(宫崎骏)中的一句话：起风了,应该努力生存
+平凡坚持到底就是伟大，相信自己能够胜利达到最顶峰
 
 ---
 
 ### 联系我
 
-| Github   |     [xiaohuishu](https://github.com/xiaohuishu)     |
+| Github   |     [dynamo](https://github.com/dymdmy2120)     |
 | -------- |     :----:     |
 | Email    |     [shuxiaohui](mailto:{{ site.email }})     |
-| QQ       |     1148240286     |
-| Weibo    |     [尽力了蚂蚁](http://weibo.com/antsmarch)     |
-| 知乎	  |     [March Shu](http://www.zhihu.com/people/march-shu)     |
+| QQ       |     2690529555     |
+| Weibo    |     [dynamomm](http://weibo.com/dynamomm)     |
 
 
 ---
 
 ### 推荐书籍
 
-> * <i class="icon-list"></i>标签：[我的书单](http://xiaohuishu.net/book/booklist.html)
+> * <i class="icon-list"></i>标签：[我的书单](http://dymdmy2120.github.io/book/booklist.html)
 
 ---
 
