@@ -22,7 +22,7 @@ icon: glyphicon-heart
 
 | Github   |     [dynamo](https://github.com/dymdmy2120)     |
 | -------- |     :----:     |
-| Email    |     [shuxiaohui](mailto:{{ site.email }})     |
+| Email    |     [dynamo](mailto:{{ site.email }})     |
 | QQ       |     2690529555     |
 | Weibo    |     [dynamomm](http://weibo.com/dynamomm)     |
 
