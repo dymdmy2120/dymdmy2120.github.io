@@ -1,7 +1,6 @@
-xiaohuishu.net
-
+dymdmy2120.github.com
 ---
-个人技术博客
+分享快乐，一起成长
 ---
 
 
