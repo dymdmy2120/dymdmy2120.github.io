@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "探究Tomcat中JSP热部署机制"
-date: 2015-07-04
+date: 2016-07-04
 categories: Tomcat
 excerpt: 修改JSP文件之后为什么不需要重启服务器呢?
 ---
@@ -190,7 +190,7 @@ Tomcat中JSP热部署机制时序图所示：
 ![tomcat](http://images.blogjava.net/blogjava_net/heavensay/classloader/loadprocess.jpg)
 
 ## 2.自定义实现热部署机制
-	
+	 
 参考:
 
 * [探索Java热部署](http://xiaohuishu.net/2015/07/26/%E6%8E%A2%E7%B4%A2Java%E7%83%AD%E9%83%A8%E7%BD%B2/)
