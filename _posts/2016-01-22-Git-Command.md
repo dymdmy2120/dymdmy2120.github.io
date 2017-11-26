@@ -76,9 +76,9 @@ Git是一个分布式版本控制系统,在此介绍Git基本常用命令
 
 > 删除版本库中的指定文件,若不小心删除则可以通过git checkout --[file]命令,此命令是用版本库的版本替代工作区的版本
 	
-9.git remote add origin git@github.com:xiaohuishu/myblog.git
+9.git remote add origin git@github.com:dynamo/myblog.git
 
-> * (xiaohuishu为github用户名,myblog.git为github中的一个仓库)
+> * (dynamo为github用户名,myblog.git为github中的一个仓库)
 > 此命令是将本地仓库与github中建立的仓库进行连接,连接之后可以将本地内容推送到github上
 
 配置远程仓库[Git教程之配置远程仓库](http://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/001374385852170d9c7adf13c30429b9660d0eb689dd43a000)
@@ -88,7 +88,7 @@ Git是一个分布式版本控制系统,在此介绍Git基本常用命令
 > * [branch]为分支名,比如master,gh-pages
 >此命令是将本地的仓库内容推送到远程仓库上
 
-11.git clone git@github.com:xiaohuishu/myblog.git
+11.git clone git@github.com:dynamo/myblog.git
 
 > 将你github中的myblog克隆到本地
 
