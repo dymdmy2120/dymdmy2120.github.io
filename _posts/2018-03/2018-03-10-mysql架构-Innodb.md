@@ -3,7 +3,7 @@ layout: post
 title: "mysql之架构详解"
 date: 2018-03-10
 categories: 数据库
-excerpt:MySQL的架构和Innodb特性
+excerpt: MySQL的架构和Innodb特性
 ---
 
 * content
