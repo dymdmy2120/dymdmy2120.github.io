@@ -1,8 +1,8 @@
 ---
 layout: post
 title: "TCP的理解"
-date: 2017-12-22
-categories: Network
+date: 2018-03-10
+categories: 数据库
 excerpt: TCP
 ---
 
