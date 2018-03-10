@@ -1,9 +1,9 @@
 ---
 layout: post
-title: "TCP的理解"
+title: "mysql之架构详解"
 date: 2018-03-10
 categories: 数据库
-excerpt: TCP
+excerpt: TCMySQL的架构和Innodb特性P
 ---
 
 * content
