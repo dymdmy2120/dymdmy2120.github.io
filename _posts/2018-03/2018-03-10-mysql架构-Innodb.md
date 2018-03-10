@@ -1,4 +1,3 @@
-
 ---
 layout: post
 title: "mysql之架构详解"
@@ -9,7 +8,6 @@ excerpt: MySQL的架构和Innodb特性
 
 * content
 {:toc}
- 
 
 # MySQL体系结构和存储引擎
 
