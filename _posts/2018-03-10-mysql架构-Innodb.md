@@ -10,7 +10,7 @@ excerpt:MySQL的架构和Innodb特性
 {:toc}
  
 
-# MySQL体系结构和存储引擎
+## MySQL体系结构和存储引擎
 
 ## 一、数据库和实例的区别
 
