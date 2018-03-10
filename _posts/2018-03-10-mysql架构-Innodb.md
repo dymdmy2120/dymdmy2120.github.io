@@ -1,16 +1,16 @@
 ---
 layout: post
-title: "mysql之架构详解"
-date: 2018-03-10
-categories: 数据库
-excerpt:MySQL的架构和Innodb特性
+title: "TCP的理解"
+date: 2017-12-22
+categories: Network
+excerpt: TCP
 ---
 
 * content
 {:toc}
  
 
-## MySQL体系结构和存储引擎
+# MySQL体系结构和存储引擎
 
 ## 一、数据库和实例的区别
 
