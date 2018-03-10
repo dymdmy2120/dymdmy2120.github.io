@@ -1,4 +1,4 @@
-<<<<<<< HEAD:_posts/2018-03/2018-03-10-mysql架构-Innodb.md
+
 ---
 layout: post
 title: "mysql之架构详解"
@@ -8,17 +8,6 @@ excerpt: MySQL的架构和Innodb特性
 ---
 
 * content
-=======
----
-layout: post
-title: "mysql之架构详解"
-date: 2018-03-10
-categories: 数据库
-excerpt: TCMySQL的架构和Innodb特性P
----
-
-* content
->>>>>>> 730549ef56d16f186e985ea04366d01a84117a82:_posts/2018-03-10-mysql架构-Innodb.md
 {:toc}
  
 
