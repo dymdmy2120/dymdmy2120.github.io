@@ -17,14 +17,14 @@ excerpt: MySQL内的文件和Innodb文件
 可以通过 show variables like '%innodb%' 查询参数
 可以设置全局的 set @@global.param=value(重新打开一个终端时的会话的参数值会改变，但是当前会话值还是旧的)可以通过 select @@global.innod\_buffer\_pool_size 设置会话 set @@session.param=value (只是作用于当前会话)，这两种设置的值，在MySQL重启后,设定的参数不会保存，除非在my.cnf文件中配置
 
-#MySQL内的日志文件
+# MySQL内的日志文件
 
-##一、错误日志
+## 一、错误日志
 
 可以通过 show variables like '%error%'查看错误日志路径在哪里，可以通过错误日志信息得知启动失败原因，以根据一些警告日志找到优化点。
 
 
-##二、慢查询日志
+## 二、慢查询日志
 
 记录一些查询时间>10s的sql语句 这个10s可以通过 long\_query\_time配置阈值，其中可以使用long\_query\_io配置执行某SQL语句进行逻辑IO读取的次数(访问缓冲池和磁盘)>100时记录到慢查询日志中。
  
@@ -34,12 +34,12 @@ excerpt: MySQL内的文件和Innodb文件
   其中为了方便查询和直观，可以将慢查询日志放入mysql数据库中的slow\_log表中，存储引擎使用的MyISAM。其中通过log_output参数进行设置为File表示使用文件存储，TABLE是使用表来存储。
 
 
-##三、查询日志
+## 三、查询日志
 
 记录一些未能正确执行的SQL语句，其中将日志信息放入到数据库mysql中的general_log中
 
 
-##四、binlog
+## 四、binlog
 
 每次对数据库更改操作都会记录到binlog中，并不是每次的更改都会马上写入到日志文件中，而是等到该事务提交时再刷到磁盘上(为了保证数据一致性，有可能事务回滚)，每个会话(每个线程)开启了一个事务就会在内存中开辟空间默认是32K可以通过binlog_cache_log进行配置大小，此值不能设置太大，因为每个线程都需要分配，但是不能太小，如果太小了会将数据写入到临时文件中。
 
@@ -54,26 +54,26 @@ excerpt: MySQL内的文件和Innodb文件
  **思考：**默认是二进制文件不是每次写入到磁盘上，而是放入到缓冲中，但是当岩机时会有一部分数据没有写入到binlog中，这给恢复和复制带来问题 sync_binlog=1表示不使用操作系统的缓冲，而是直接写入到二进制日志中,但是也有个问题就是如果在提交事务之前刚好岩机，那么事务没有提交，重启时会回滚事务，但是这些操作都已经记录在binlog中，因此为了保证binlog和InnoDB存储引擎数据文件的同步，需要进行设置 innodb_support_xa=1。如果当前数据库担任slave角色，则不会从master取得并执行的二进制文件写入自己的二进制日志文件中去，如果需要写入则设置 log_slave_updates，若要搭建master->slave->slave必须设置该参数。
 
 
-#套接字文件 
+# 套接字文件 
 
 就是本地连接数据库的一种unix域套接字方式，需要一个socket文件，放在/temp/mysql.soc
 
-#PID文件
+# PID文件
 
 每次启动MySQL进程时，会将pid写入到一个pid文件中
 show variables like '%pid_file'\G; 可以查看pid文件在哪里，一般在／mysql/data下以主机名命名.pid结尾文件
 
-#表结构空间
+# 表结构空间
 
 无论采用何种存储引擎，每个表都会有一个 表名.frm文件，存放表的结构信息。frm也可以存放视图的定义。
 
-#InnoDB文件
-##一、表空间文件
+# InnoDB文件
+## 一、表空间文件
 innodb存储数据的文件，分为共享表空间(存放所有表的数据) 又ibdata1和ibdata2两个文件组成的，默认为10M，然后再追加。用户可以不用将所有的数据放在共享表空间中，可以通过 innodb_file_per_table ON 设置成每张表的数据放在独立表空间，存放在ibdata文件中。其中文件命名是  表名.ibdata 此文件中仅仅存放该表的数据、索引、插入BITMAP等信息，其余的信息还是放在共享表空间中。
 
 ![props](http://dymdmy2120.github.com//static/2018-03-images/innodb-table-file.png)
 
-##二、redo 重做日志文件
+## 二、redo 重做日志文件
 
 innodb之所以支持事务，原理实现就是利用redo文件，每次在执行更改数据之前先记录到redo文件中，该文件不能太大否则恢复时间很长，当然也不能太小否则会导致 async checkpoint(redo_lsn_checkpoint > 75*redo_log_size)将脏页中数据频繁的刷新到磁盘上，性能的抖动，此时阻塞用户线程。
 
