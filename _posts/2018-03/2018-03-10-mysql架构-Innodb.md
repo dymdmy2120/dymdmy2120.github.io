@@ -84,7 +84,7 @@ show engine innodb status \G;
 
 srv_master_thread loops:2188 1_second,1537 sleeps, 218 10_seconds, 2 background, 2 flush
 
-主线程的主循环运行类2188次，此数是根据定时器1s运行一次，一共过了2188s理论上运行了2188次主循环，但是由于循环体内需要处理事情，导致时间上那时刻只有运行了1537次，所以通过此差值可以看
+主线程的主循环运行类2188次，此数是根据定时器1s运行一次，一共过了2188s理论上运行了2188次主循环，但是由于循环体内需要处理事情，导致时间上那时刻只有运行了1537次，所以通过此差值可以看数据库的负载情况。
 
 
 #  InnoDB存储引擎架构
@@ -98,7 +98,7 @@ srv_master_thread loops:2188 1_second,1537 sleeps, 218 10_seconds, 2 background,
 
 **IO线程：**read thread 、 write thread 、log IO thread(在更新缓冲数据页前先放入到redo缓冲数据区，然后定时更新到磁盘) 、insert buffer thread(合并插入缓冲) 其中读写线程可以使用innodb_read/write_io_threads参数进行控制，默认为4
 
-**Purge Thread：**对于已经提交的事务的undolog页进行回收，InnoDB1.1之前是在Master Thread为了提高CPU使用率，单独出来
+**Purge Thread：**对于已经提交的事务的undolog页进行回收，InnoDB1.1之前是在Master Thread为了提高CPU使用率，单独出来用一个线程做这个事。
 
  **Page Cleaner Thread：**缓冲池中脏页数据同步到磁盘中，一开始在主线程中，后独立一个线程避免查询时候阻塞，提高数据库的性能
 
@@ -138,8 +138,8 @@ srv_master_thread loops:2188 1_second,1537 sleeps, 218 10_seconds, 2 background,
 >   但是在传统的LRU list基础上做了些改动，有个midpoint概念，默认每次从磁盘查询到的页会放在LRU列表的3/8的这个位置，其上面为new列表(存放的是热数据)，其下面为old列表。为什么不直接放在顶部呢？因为对于某些扫描全表的查询会访问全部页时，会把原来热点的数据页移除掉实际上这些数据下次可能都用不上。
 >   因此每次都会放在3/8的位置，如果空间不够的话仅仅只会3/8位置之下做移动，不会影响热点数据。可以通过innodb_old_block_pct进行配置midpoint位置，默认为37 也就是37%大概3/8的位置
 > 
->   如果在非热位置的页再次访问时就会从old移动到new列表中 这称为page made young，其中可以通过参数 innodb_old_block_time单位毫秒 进行设定多久(默认为1000ms)之后再次访问就放入到热数据区,如果因为在设置的时间内访问了改页导致没有移动到new列表是
->   称为 page not made young
+>   如果在非热位置的页再次访问时就会从old移动到new列表中 这称为page made young，其中可以通过参数 innodb_old_block_time单位毫秒 进行设定多久(默认为1000ms)之后再次访问就放入到热数据区,如果因为在设置的时间内访问了该页而后面没有访问过导致没有移动到new列表
+>   称为 page not made young，也就是要想将数据从old列表移到new列表 至少要在innodb_old_block_time时间后。
 
 >   要点2：
 > 
@@ -147,7 +147,7 @@ srv_master_thread loops:2188 1_second,1537 sleeps, 218 10_seconds, 2 background,
 > 
 >   Free list 存放的空闲页，每次从磁盘中加载页到内存中，首先去Free list申请页，申请成功后从list中删除放入到LRU中，否则会淘汰LRU列表末尾的页，将该内存空间分配给新的页
 > 
->   Flush list 脏页的既存放在LRU list中又在Flush list，表示列表中的页都是脏页(内存中的页和磁盘的页不一致)，经过CHECKPOINT机制刷新会磁盘中
+>   Flush list 脏页既存放在LRU list中又在Flush list，表示列表中的页都是脏页(内存中的页和磁盘的页不一致)，经过CHECKPOINT机制刷新会磁盘中
 
   **3、重做日志缓冲 redo log buffer**
 
@@ -168,7 +168,7 @@ srv_master_thread loops:2188 1_second,1537 sleeps, 218 10_seconds, 2 background,
 
  **FLUSH_LRU_List Checkpoint**  为了保证LRU列表中有100左右空闲页，在查询的时候如果没有则将LRU尾端的页移除，如果此页时脏页则就需要进行Checkpoint
 
-**Async/Sync Flush Checkpoint**  指的是重做日志不可用情况,将脏页刷新到磁盘中，此脏页从Flush list选取 是已经写入到重做日志的LSN记为redo_lsn，已经刷会到磁盘最新页的LSN记为checkpoint_lsn checkpoint_age = redo_lsn-checkpoint_lsn
+**Async/Sync Flush Checkpoint**  指的是重做日志不可用情况,将脏页刷新到磁盘中，此脏页从Flush list选取 是已经写入到重做日志的LSN记为redo_lsn，已经刷新到磁盘最新页的LSN记为checkpoint_lsn checkpoint_age = redo_lsn-checkpoint_lsn
 
 其中checkpoint_age就是表示重做日志中还有多少页的数据没有同步过去
  async_water_mark = 75%*total_redo_log_file_size
@@ -176,7 +176,7 @@ srv_master_thread loops:2188 1_second,1537 sleeps, 218 10_seconds, 2 background,
  sync_water_mark = 90%*total_redo_log_file_size
  
  checkpoint_age<async_water_mark不做任何动作
- async_water_mark < checkpoint_age < sync_water_mark 异步从Flush list选取一定量的页刷新到磁盘中 直到 checkpoint_age<async_water_mark
+ async_water_mark < checkpoint_age < sync_water_mark 异步从Flush list选取一定量的页刷新到磁盘中 直到 checkpoint_age < async_water_mark
  checkpoint_age > sync_water_mark Sync Flush Checkpoint 同步进行刷新
 
  **Async Flush Checkpoint**异步仅仅会阻塞发现问题(重做日志不可用)的查询线程，而Sync Flush Checkpoint会阻塞所有查询线程，在InnoDB 1.2x(MySQL5.6后)会单独放在Pager Cleaner Thread故不会阻塞用户线程
@@ -192,7 +192,7 @@ srv_master_thread loops:2188 1_second,1537 sleeps, 218 10_seconds, 2 background,
 
 srv_master_thread loops:2188 1_second,1537 sleeps, 218 10_seconds, 2 background, 2 flush
 
-主线程的主循环运行类2188次，此数是根据定时器1s运行一次，一共过了2188s理论上运行了2188次主循环，但是由于循环体内需要处理事情，导致时间上那时刻只有运行了1537次，所以通过此差值可以看
+主线程的主循环运行类2188次，此数是根据定时器1s运行一次，一共过了2188s理论上运行了2188次主循环，但是由于循环体内需要处理事情，导致时间上那时刻只有运行了1537次，所以通过此差值可以看出数据库的负载情况。1537/2188 比值越小说明负载越高，为1时负载越小。
 
 # InnoDB关键特性
 
@@ -244,7 +244,7 @@ Change Buffer是对Insert Buffer一次升级 支持DML操作 Insert Delete  Upda
 
 >解决方案：
 
->因此在缓冲中会有个doublewrite buffer 大小为2M会使用 memcpy将脏页拷贝到此缓冲中，此页是连续的(目的是为了保证刷新到磁盘中)，在磁盘中对应也有个2M的共享表空间。 其中doublewrite buffer分成两个1M，调用fsync 写入到共享共享空间后，最后将其buffer中页写入各个表空间文件中，此时是离散的。
+>因此在缓冲中会有个doublewrite buffer 大小为2M会使用 memcpy将脏页拷贝到此缓冲中，此页是连续的(目的是为了保证刷新到磁盘中是连续的)，在磁盘中对应也有个2M的共享表空间。 其中doublewrite buffer分成两个1M，调用fsync 写入到共享共享空间后，最后将其buffer中页写入各个表空间文件中，此时是离散的。
 
 恢复的时候，从共享空间找到该页的一个副本，将其复制到表空间文件，然后再执行重做日志。
 
@@ -267,7 +267,7 @@ IO Merge，可以将多个IO合并成一个IO 例如需要访问的 （space,pag
 
 在关闭时会根据 innodb_fast_shutdown的不同的参数值，做出不同的行为(一些多脏页或insert buffer数据同步)
 例如0 表示在关闭之前 Innodb完成full purge 和 merge insert buffer 并且把所有的脏页刷新回磁盘
-2表示不进行 full purge 等操作只需要将重做缓冲刷新到日志文件中，但是当下次启动时会更加redo日志进行恢复
+2表示不进行 full purge 等操作只需要将重做缓冲刷新到日志文件中，但是当下次启动时会根据redo日志进行恢复
 
 根据 innodb_force_recovery不同的设置值，恢复的行为也会不同。
 
